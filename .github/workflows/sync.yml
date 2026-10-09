@@ -2,6 +2,8 @@ name: Sync Leetcode
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "30 15 * * *"   # daily at 11:30pm SGT
 
 env:
   SYNC_SINCE: "2026-06-28T00:00:00+08:00"   # only sync submissions after this
