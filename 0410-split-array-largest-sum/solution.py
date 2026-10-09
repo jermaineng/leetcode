@@ -1,32 +1,35 @@
 class Solution:
-    def splitArray(self, nums: List[int], k: int) -> int:
-        left = max(nums)
-        right = sum(nums)
-
-        while left < right:
+    def splitArray(self, nums: list[int], k: int) -> int:
+        def can_mid(mid):
             curr_sum = 0
-            count = 1
-            mid = (left + right) // 2
+            subarr_count = 1
 
             for num in nums:
+                if num > mid:
+                    return False
+                    
                 if curr_sum + num > mid:
-                    count += 1
+                    subarr_count += 1
                     curr_sum = num
                 else:
                     curr_sum += num
+            
+            return subarr_count <= k
+        
+        left = 0
+        right = 10**9
+        ans = 0
 
-                if count > k:
-                    break
+        while left <= right:
+            mid = (left + right) // 2
 
-            if count > k:
-                left = mid + 1 # mid (ans) is too small
+            if can_mid(mid):
+                ans = mid
+                right = mid - 1
             else:
-                right = mid
+                left = mid + 1
 
-        return left      
+        return ans
 
-# binary search on the sum where max is sum of entire array (subarray is entire array), min is max num from array (subarray has only one number)
-# if curr num is infeasible: left = mid + 1 
-# otherwise right = mid
-
-# feasibility: iterate through nums, whenever curr sum > mid: increase subarray count
+# bsta
+# left = 0, right = 10^6
