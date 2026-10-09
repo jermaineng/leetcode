@@ -3,10 +3,27 @@ name: Sync Leetcode
 on:
   workflow_dispatch:
 
+env:
+  SYNC_SINCE: "2026-06-28T00:00:00+08:00"   # only sync submissions after this
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Add start marker (first run only)
+        run: |
+          if [ -z "$(git log --grep='^Sync LeetCode submission' -n 1 --format=%H)" ]; then
+            git config user.name "${{ github.actor }}"
+            git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+            GIT_COMMITTER_DATE="$SYNC_SINCE" git commit --allow-empty \
+              --date="$SYNC_SINCE" -m "Sync LeetCode submission - start marker"
+            git push
+          fi
+
       - name: Sync
         uses: joshcai/leetcode-sync@v1.7
         with:
